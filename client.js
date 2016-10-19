@@ -1,6 +1,6 @@
 Accounts.oauth.tryConnectAfterPopupClosed = function(credentialToken, callback) {
   var credentialSecret = OAuth._retrieveCredentialSecret(credentialToken) || null;
-  Meteor.call('connectUserWithFacebook', credentialToken, credentialSecret, function() {
+  Meteor.call('connectUserWithNaver', credentialToken, credentialSecret, function() {
     if (!!callback)
       callback(arguments);
   });
@@ -16,7 +16,7 @@ Accounts.oauth.credentialRequestForConnectCompleteHandler = function(callback) {
   };
 };
 
-Meteor.connectWithFacebook = function(options, callback) {
+Meteor.connectWithNaver = function(options, callback) {
   // support a callback without options
   if (! callback && typeof options === "function") {
     callback = options;
@@ -24,5 +24,5 @@ Meteor.connectWithFacebook = function(options, callback) {
   }
 
   var credentialRequestCompleteCallback = Accounts.oauth.credentialRequestForConnectCompleteHandler(callback);
-  Facebook.requestCredential(options, credentialRequestCompleteCallback);
+  Naver.requestCredential(options, credentialRequestCompleteCallback);
 };
