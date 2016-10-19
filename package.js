@@ -1,6 +1,11 @@
 Package.describe({
-  summary: "Naver Connect package to connect naver users to existing users."
+  name: "datamaker:naver-connect",
+  version: '0.0.1',
+  summary: "Naver Connect package to connect naver users to existing users.",
+  git: 'https://github.com/datamaker/meteor-naver-connect',
+  documentation: 'README.md'
 });
+
 
 Package.on_use(function (api) {
   api.use(['spectrum:accounts-naver'], ['client', 'server']);
