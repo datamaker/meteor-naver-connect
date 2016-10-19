@@ -5,9 +5,9 @@
 ### Why use this package?
 
 #### use case 1
-Your users might have registered to your app using the email/password based registration process. When they decide to connect their naver account, they are (without this package) currently being forced to logout, create a new account using fb-login. At this point you might have added custom logic on a onCreatUser callback to look for duplicate users...
+Your users might have registered to your app using the email/password based registration process. When they decide to connect their naver account, they are (without this package) currently being forced to logout, create a new account using naver-login. At this point you might have added custom logic on a onCreatUser callback to look for duplicate users...
 
-No more... If you want to connect allready authenticated users in your app to their fb-account, this package provides extra methods in the Meteor's Account package to do this the proper way. Add a naver connect button inside their profile, and add their fb profile to their meteor-app-profile. The next time they login, they can use the (unmodified) naver-login button.
+No more... If you want to connect allready authenticated users in your app to their naver-account, this package provides extra methods in the Meteor's Account package to do this the proper way. Add a naver connect button inside their profile, and add their naver profile to their meteor-app-profile. The next time they login, they can use the (unmodified) naver-login button.
 
 #### use case 2
 You don't use naver login. You have millions of users that have properly registered to your service, using their email and providing a password for authentication. Now you decide to add naver login functionality nevertheless. Your loggedin users notice the naver connect-button in their profile (from use case 1) and make the connection.
