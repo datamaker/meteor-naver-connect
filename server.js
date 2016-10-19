@@ -47,6 +47,9 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
 //
 Accounts.updateOrCreateUserFromExternalService = function(
   serviceName, serviceData, options) {
+
+  console.log('updateOrCreateUserFromExternalService', serviceName, serviceData, options )
+
   options = _.clone(options || {});
 
   if (serviceName === "password" || serviceName === "resume")
@@ -98,10 +101,12 @@ Accounts.updateOrCreateUserFromExternalService = function(
 
 Accounts.externalServiceSelector = function(
   serviceName, serviceData, options){
+
+  console.log('externalServiceSelector', serviceName, serviceData, options);
+
   var selector = false;
 
   //check if specific selector is available for service
-  //eg externalServiceSelectorTwitter
   var selectorMethod = "externalServiceSelector";
     selectorMethod += serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
 
@@ -118,34 +123,14 @@ Accounts.externalServiceSelector = function(
   return selector;
 };
 
-Accounts.externalServiceSelectorTwitter = function(
-  serviceName, serviceData, options){
-  var selector = {};
-  // XXX Temporary special case for Twitter. (Issue #629)
-  //   The serviceData.id will be a string representation of an integer.
-  //   We want it to match either a stored string or int representation.
-  //   This is to cater to earlier versions of Meteor storing twitter
-  //   user IDs in number form, and recent versions storing them as strings.
-  //   This can be removed once migration technology is in place, and twitter
-  //   users stored with integer IDs have been migrated to string IDs.
-  if (!isNaN(serviceData.id)) {
-    selector["$or"] = [{},{}];
-    selector["$or"][0][serviceIdKey] = serviceData.id;
-    selector["$or"][1][serviceIdKey] = parseInt(serviceData.id, 10);
-  } else {
-    selector = false;
-  }
-  return selector;
-};
-
-
-
-
 /// this must remain in this package after pull request merge
 
 //our custom naver selector to also select users on naver-email
 Accounts.externalServiceSelectorNaver = function(
   serviceName, serviceData, options){
+
+  console.log('externalServiceSelectorNaver', serviceName, serviceData, options);
+
   var serviceIdKey = "services." + serviceName + ".id";
   var selector = {};
   selector["$or"] = [{},{}];
@@ -159,6 +144,9 @@ Accounts.externalServiceSelectorNaver = function(
 
 Meteor.methods({
   connectUserWithNaver: function (token, secret) {
+
+    console.log('connectUserWithNaver', token, secret);
+
     //errors
     if (! this.userId)
       throw new Meteor.Error(403, "user must be loggedin");
