@@ -123,6 +123,8 @@ Accounts.externalServiceSelector = function(
   var selectorMethod = "externalServiceSelector";
     selectorMethod += serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
 
+  console.log('externalServiceSelector-selectorMethod', selectorMethod, Accounts[selectorMethod]);
+
   if(Accounts[selectorMethod]){
     selector = Accounts[selectorMethod](serviceName, serviceData, options);
   }
@@ -131,7 +133,10 @@ Accounts.externalServiceSelector = function(
   if(!selector && !! serviceData.id) {
     var serviceIdKey = "services." + serviceName + ".id";
     selector[serviceIdKey] = serviceData.id;
+    console.log('externalServiceSelector-selector[serviceIdKey]', selector[serviceIdKey]);
   }
+
+  console.log('externalServiceSelector-result',selector);
 
   return selector;
 };
