@@ -8,11 +8,11 @@ Package.describe({
 
 
 Package.on_use(function (api) {
-  api.use(['spectrum:accounts-naver'], ['client', 'server']);
+  api.use(['spectrum:accounts-naver@0.0.1'], ['client', 'server']);
 
   //add dependency for overriding core
-  api.use('oauth-encryption', 'server', {weak: true});
-  api.use('oauth');
+  api.use('oauth-encryption@1.2.0', 'server', {weak: true});
+  api.use('oauth@1.1.11');
   api.use('spectrum:naver@0.0.1', ['client', 'server']);
 
   api.add_files(["client.js"], 'client');
