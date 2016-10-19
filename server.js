@@ -27,6 +27,7 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
     if (OAuthEncryption && OAuthEncryption.isSealed(value))
       value = OAuthEncryption.seal(OAuthEncryption.open(value), userId);
     serviceData[key] = value;
+    console.log('pinEncryptedFieldsToUser', serviceData[key])
   });
 };
 
@@ -62,10 +63,14 @@ Accounts.updateOrCreateUserFromExternalService = function(
 
   var selector = Accounts.externalServiceSelector(serviceName, serviceData, options);
 
+  console.log('updateOrCreateUserFromExternalService - selector', selector )
+
   if (! selector)
     return false;
 
   var user = Meteor.users.findOne(selector);
+
+  console.log('user', user);
 
   if (user) {
     pinEncryptedFieldsToUser(serviceData, user._id);
@@ -80,6 +85,8 @@ Accounts.updateOrCreateUserFromExternalService = function(
       setAttrs["services." + serviceName + "." + key] = value;
     });
 
+    console.log('user._id', user._id, setAttrs);
+
     // XXX Maybe we should re-use the selector above and notice if the update
     //     touches nothing?
     Meteor.users.update(user._id, {$set: setAttrs});
@@ -92,6 +99,12 @@ Accounts.updateOrCreateUserFromExternalService = function(
     // insertUserDoc.
     user = {services: {}};
     user.services[serviceName] = serviceData;
+
+    console.log('aaaaaaa', {
+      type: serviceName,
+      userId: Accounts.insertUserDoc(options, user)
+    } );
+
     return {
       type: serviceName,
       userId: Accounts.insertUserDoc(options, user)
