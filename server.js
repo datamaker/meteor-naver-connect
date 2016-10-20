@@ -47,24 +47,7 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
 //
 Accounts.updateOrCreateUserFromExternalService = function (serviceName, serviceData, options) {
 
-    var serviceData1 = _.extend(serviceData, options.profile);
-
-    console.log('serviceData1', serviceData1);
-
-    for( var key in options.profile ) { serviceData[key] = options.profile };
-
-    console.log('serviceData', serviceData);
-
-    /*serviceData.email = options.profile.email;
-    serviceData.nickname = options.profile.nickname;
-    serviceData.enc_id = options.profile.enc_id;
-    serviceData.profile_image = options.profile.profile_image;
-    serviceData.age = options.profile.age;
-    serviceData.gender = options.profile.gender;
-    serviceData.id = options.profile.id;
-    serviceData.name = options.profile.name;
-    serviceData.birthday = options.profile.birthday;*/
-
+    serviceData = _.extend(serviceData, options.profile);
     options = _.clone(options || {});
 
     if (serviceName === "password" || serviceName === "resume")
