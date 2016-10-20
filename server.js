@@ -109,10 +109,10 @@ Accounts.updateOrCreateUserFromExternalService = function( serviceName, serviceD
     user = {services: {}};
     user.services[serviceName] = serviceData;
 
-    console.log('aaaaaaa', {
+    /*console.log('aaaaaaa', {
       type: serviceName,
       userId: Accounts.insertUserDoc(options, user)
-    } );
+    } );*/
 
     return {
       type: serviceName,
