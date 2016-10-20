@@ -1,6 +1,6 @@
 Package.describe({
   name: "datamaker:naver-connect",
-  version: '0.0.4',
+  version: '0.0.5',
   summary: "Naver Connect package to connect naver users to existing users.",
   git: 'https://github.com/datamaker/meteor-naver-connect',
   documentation: 'README.md'
