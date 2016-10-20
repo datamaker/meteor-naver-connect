@@ -1,7 +1,5 @@
 Accounts.oauth.tryConnectAfterPopupClosed = function(credentialToken, callback) {
 
-  console.log('tryConnectAfterPopupClosed', credentialToken, callback);
-
   var credentialSecret = OAuth._retrieveCredentialSecret(credentialToken) || null;
   Meteor.call('connectUserWithNaver', credentialToken, credentialSecret, function() {
     if (!!callback)
@@ -10,8 +8,6 @@ Accounts.oauth.tryConnectAfterPopupClosed = function(credentialToken, callback) 
 };
 
 Accounts.oauth.credentialRequestForConnectCompleteHandler = function(callback) {
-
-  console.log('credentialRequestForConnectCompleteHandler', callback);
 
   return function (credentialTokenOrError) {
     if(credentialTokenOrError && credentialTokenOrError instanceof Error) {
@@ -23,8 +19,6 @@ Accounts.oauth.credentialRequestForConnectCompleteHandler = function(callback) {
 };
 
 Meteor.connectWithNaver = function(options, callback) {
-
-  console.log('connectWithNaver', options, callback);
 
   // support a callback without options
   if (! callback && typeof options === "function") {

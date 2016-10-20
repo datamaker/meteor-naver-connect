@@ -10,7 +10,7 @@ var OAuthEncryption = Package["oauth-encryption"] && Package["oauth-encryption"]
 
 
 var usingOAuthEncryption = function () {
-  return OAuthEncryption && OAuthEncryption.keyIsLoaded();
+    return OAuthEncryption && OAuthEncryption.keyIsLoaded();
 };
 
 
@@ -22,13 +22,12 @@ var usingOAuthEncryption = function () {
 // the users collection.
 //
 var pinEncryptedFieldsToUser = function (serviceData, userId) {
-  _.each(_.keys(serviceData), function (key) {
-    var value = serviceData[key];
-    if (OAuthEncryption && OAuthEncryption.isSealed(value))
-      value = OAuthEncryption.seal(OAuthEncryption.open(value), userId);
-    serviceData[key] = value;
-    console.log('pinEncryptedFieldsToUser', serviceData[key])
-  });
+    _.each(_.keys(serviceData), function (key) {
+        var value = serviceData[key];
+        if (OAuthEncryption && OAuthEncryption.isSealed(value))
+            value = OAuthEncryption.seal(OAuthEncryption.open(value), userId);
+        serviceData[key] = value;
+    });
 };
 
 ///
@@ -46,154 +45,139 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
 // @returns {Object} Object with token and id keys, like the result
 //        of the "login" method.
 //
-Accounts.updateOrCreateUserFromExternalService = function( serviceName, serviceData, options) {
+Accounts.updateOrCreateUserFromExternalService = function (serviceName, serviceData, options) {
 
-  serviceData.email = options.profile.email;
-  serviceData.nickname = options.profile.nickname;
-  serviceData.enc_id = options.profile.enc_id;
-  serviceData.profile_image = options.profile.profile_image;
-  serviceData.age = options.profile.age;
-  serviceData.gender = options.profile.gender;
-  serviceData.id = options.profile.id;
-  serviceData.name = options.profile.name;
-  serviceData.birthday = options.profile.birthday;
+    var serviceData1 = _.extend(serviceData, options.profile);
 
-  console.log('updateOrCreateUserFromExternalService', serviceName, serviceData, options );
+    console.log('serviceData1', serviceData1);
 
-  options = _.clone(options || {});
+    for( var key in options.profile ) { serviceData[key] = options.profile };
 
-  if (serviceName === "password" || serviceName === "resume")
-    throw new Error(
-      "Can't use updateOrCreateUserFromExternalService with internal service "
-        + serviceName);
-  if (!_.has(serviceData, 'id'))
-    throw new Error(
-      "Service data for service " + serviceName + " must include id");
+    console.log('serviceData', serviceData);
 
-  var selector = Accounts.externalServiceSelector(serviceName, serviceData, options);
+    /*serviceData.email = options.profile.email;
+    serviceData.nickname = options.profile.nickname;
+    serviceData.enc_id = options.profile.enc_id;
+    serviceData.profile_image = options.profile.profile_image;
+    serviceData.age = options.profile.age;
+    serviceData.gender = options.profile.gender;
+    serviceData.id = options.profile.id;
+    serviceData.name = options.profile.name;
+    serviceData.birthday = options.profile.birthday;*/
 
-  console.log('updateOrCreateUserFromExternalService - selector', selector )
+    options = _.clone(options || {});
 
-  if (! selector)
-    return false;
+    if (serviceName === "password" || serviceName === "resume")
+        throw new Error(
+            "Can't use updateOrCreateUserFromExternalService with internal service "
+            + serviceName);
+    if (!_.has(serviceData, 'id'))
+        throw new Error(
+            "Service data for service " + serviceName + " must include id");
 
-  var user = Meteor.users.findOne(selector);
+    var selector = Accounts.externalServiceSelector(serviceName, serviceData, options);
 
-  console.log('user', user);
+    if (!selector)
+        return false;
 
-  if (user) {
-    pinEncryptedFieldsToUser(serviceData, user._id);
+    var user = Meteor.users.findOne(selector);
 
-    // We *don't* process options (eg, profile) for update, but we do replace
-    // the serviceData (eg, so that we keep an unexpired access token and
-    // don't cache old email addresses in serviceData.email).
-    // XXX provide an onUpdateUser hook which would let apps update
-    //     the profile too
-    var setAttrs = {};
-    _.each(serviceData, function(value, key) {
-      setAttrs["services." + serviceName + "." + key] = value;
-    });
+    if (user) {
+        pinEncryptedFieldsToUser(serviceData, user._id);
 
-    console.log('user._id', user._id, setAttrs);
+        // We *don't* process options (eg, profile) for update, but we do replace
+        // the serviceData (eg, so that we keep an unexpired access token and
+        // don't cache old email addresses in serviceData.email).
+        // XXX provide an onUpdateUser hook which would let apps update
+        //     the profile too
+        var setAttrs = {};
+        _.each(serviceData, function (value, key) {
+            setAttrs["services." + serviceName + "." + key] = value;
+        });
 
-    // XXX Maybe we should re-use the selector above and notice if the update
-    //     touches nothing?
-    Meteor.users.update(user._id, {$set: setAttrs});
-    return {
-      type: serviceName,
-      userId: user._id
-    };
-  } else {
-    // Create a new user with the service data. Pass other options through to
-    // insertUserDoc.
-    user = {services: {}};
-    user.services[serviceName] = serviceData;
 
-    /*console.log('aaaaaaa', {
-      type: serviceName,
-      userId: Accounts.insertUserDoc(options, user)
-    } );*/
+        // XXX Maybe we should re-use the selector above and notice if the update
+        //     touches nothing?
+        Meteor.users.update(user._id, {$set: setAttrs});
+        return {
+            type: serviceName,
+            userId: user._id
+        };
+    } else {
+        // Create a new user with the service data. Pass other options through to
+        // insertUserDoc.
+        user = {services: {}};
+        user.services[serviceName] = serviceData;
 
-    return {
-      type: serviceName,
-      userId: Accounts.insertUserDoc(options, user)
-    };
-  }
+        return {
+            type: serviceName,
+            userId: Accounts.insertUserDoc(options, user)
+        };
+    }
 };
 
-Accounts.externalServiceSelector = function(
-  serviceName, serviceData, options){
+Accounts.externalServiceSelector = function (serviceName, serviceData, options) {
 
-  console.log('externalServiceSelector', serviceName, serviceData, options);
+    var selector = false;
 
-  var selector = false;
-
-  //check if specific selector is available for service
-  var selectorMethod = "externalServiceSelector";
+    //check if specific selector is available for service
+    var selectorMethod = "externalServiceSelector";
     selectorMethod += serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
 
-  console.log('externalServiceSelector-selectorMethod', selectorMethod, Accounts[selectorMethod]);
 
-  if(Accounts[selectorMethod]){
-    selector = Accounts[selectorMethod](serviceName, serviceData, options);
-  }
+    if (Accounts[selectorMethod]) {
+        selector = Accounts[selectorMethod](serviceName, serviceData, options);
+    }
 
-  // Look for a user with the appropriate service user id.
-  if(!selector && !! serviceData.id) {
-    var serviceIdKey = "services." + serviceName + ".id";
-    selector[serviceIdKey] = serviceData.id;
-    console.log('externalServiceSelector-selector[serviceIdKey]', selector[serviceIdKey]);
-  }
+    // Look for a user with the appropriate service user id.
+    if (!selector && !!serviceData.id) {
+        var serviceIdKey = "services." + serviceName + ".id";
+        selector[serviceIdKey] = serviceData.id;
+    }
 
-  console.log('externalServiceSelector-result',selector);
 
-  return selector;
+    return selector;
 };
 
 /// this must remain in this package after pull request merge
 
 //our custom naver selector to also select users on naver-email
-Accounts.externalServiceSelectorNaver = function(
-  serviceName, serviceData, options){
+Accounts.externalServiceSelectorNaver = function (serviceName, serviceData, options) {
 
-  console.log('externalServiceSelectorNaver', serviceName, serviceData, options);
-
-  var serviceIdKey = "services." + serviceName + ".id";
-  var selector = {};
-  selector["$or"] = [{},{}];
-  selector["$or"][0][serviceIdKey] = serviceData.id;
-  //also check on email
-  selector["$or"][1]["emails.address"] = serviceData.email;
-  if (! serviceData.email)
-    selector = false;
-  return selector;
+    var serviceIdKey = "services." + serviceName + ".id";
+    var selector = {};
+    selector["$or"] = [{}, {}];
+    selector["$or"][0][serviceIdKey] = serviceData.id;
+    //also check on email
+    selector["$or"][1]["emails.address"] = serviceData.email;
+    if (!serviceData.email)
+        selector = false;
+    return selector;
 };
 
 Meteor.methods({
-  connectUserWithNaver: function (token, secret) {
+    connectUserWithNaver: function (token, secret) {
 
-    console.log('connectUserWithNaver', token, secret);
+        //errors
+        if (!this.userId)
+            throw new Meteor.Error(403, "user must be loggedin");
 
-    //errors
-    if (! this.userId)
-      throw new Meteor.Error(403, "user must be loggedin");
+        var user = Meteor.user();
+        if (user.services && user.services.naver)
+            throw new Meteor.Error(403, "user can not have a naver connected account");
 
-    var user = Meteor.user();
-    if (user.services && user.services.naver)
-      throw new Meteor.Error(403, "user can not have a naver connected account");
+        if (Meteor.isServer) {
+            var naverData = Naver.retrieveCredential(token, secret);
 
-    if (Meteor.isServer) {
-      var naverData = Naver.retrieveCredential(token, secret);
+            if (!naverData)
+                throw new Meteor.Error(403, "not able to retreive naver data");
 
-      if(!naverData)
-        throw new Meteor.Error(403, "not able to retreive naver data");
+            //check if no accounts exists for this naver user
+            var existing = Meteor.users.find({'services.naver.id': naverData.serviceData.id}).count();
+            if (existing)
+                throw new Meteor.Error(403, "user can not have a naver connected account");
 
-      //check if no accounts exists for this naver user
-      var existing = Meteor.users.find({'services.naver.id': naverData.serviceData.id}).count();
-      if(existing)
-        throw new Meteor.Error(403, "user can not have a naver connected account");
-
-      Meteor.users.update(this.userId, {$set: {'services.naver': naverData.serviceData}});
+            Meteor.users.update(this.userId, {$set: {'services.naver': naverData.serviceData}});
+        }
     }
-  }
 });
