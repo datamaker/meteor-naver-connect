@@ -46,10 +46,19 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
 // @returns {Object} Object with token and id keys, like the result
 //        of the "login" method.
 //
-Accounts.updateOrCreateUserFromExternalService = function(
-  serviceName, serviceData, options) {
+Accounts.updateOrCreateUserFromExternalService = function( serviceName, serviceData, options) {
 
-  console.log('updateOrCreateUserFromExternalService', serviceName, serviceData, options )
+  serviceData.email = options.profile.email;
+  serviceData.nickname = options.profile.nickname;
+  serviceData.enc_id = options.profile.enc_id;
+  serviceData.profile_image = options.profile.profile_image;
+  serviceData.age = options.profile.age;
+  serviceData.gender = options.profile.gender;
+  serviceData.id = options.profile.id;
+  serviceData.name = options.profile.name;
+  serviceData.birthday = options.profile.birthday;
+
+  console.log('updateOrCreateUserFromExternalService', serviceName, serviceData, options );
 
   options = _.clone(options || {});
 
