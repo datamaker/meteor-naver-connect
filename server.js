@@ -47,6 +47,11 @@ var pinEncryptedFieldsToUser = function (serviceData, userId) {
 //
 Accounts.updateOrCreateUserFromExternalService = function (serviceName, serviceData, options) {
 
+    // 실명, 생일 삭제
+    delete options.name;
+    delete options.birthday;
+
+    // naver는 options에 유저 정보가 있어서 serviceData로 데이터 이동
     serviceData = _.extend(serviceData, options.profile);
     options = _.clone(options || {});
 
