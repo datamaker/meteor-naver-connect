@@ -1,6 +1,6 @@
 #meteor-naver-connect
 
-## naver Connect package to connect naver users to existing users.
+## Naver Connect package to connect naver users to existing users.
 
 ### Why use this package?
 
@@ -19,7 +19,7 @@ No more... When they use the naver-login button, their existing account is searc
 ### How to use
 Just install the package:
 ```bash
-$ mrt install naver-connect
+$ Meteor addd datamaker:naver-connect
 ```
 
 You get email-based existing user detection out of the box for naver-login. No onCreateUser callback will run, because no new user will be created of the user was found.
