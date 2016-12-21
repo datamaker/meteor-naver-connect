@@ -19,7 +19,7 @@ No more... When they use the naver-login button, their existing account is searc
 ### How to use
 Just install the package:
 ```bash
-$ Meteor addd datamaker:naver-connect
+$ meteor add datamaker:naver-connect
 ```
 
 You get email-based existing user detection out of the box for naver-login. No onCreateUser callback will run, because no new user will be created of the user was found.
