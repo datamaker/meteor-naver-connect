@@ -81,8 +81,8 @@ Accounts.updateOrCreateUserFromExternalService = function (serviceName, serviceD
         var setAttrs = {};
         _.each(serviceData, function (value, key) {
             setAttrs["services." + serviceName + "." + key] = value;
+            setAttrs['emails.0.verified'] = true
         });
-
 
         // XXX Maybe we should re-use the selector above and notice if the update
         //     touches nothing?
@@ -164,8 +164,13 @@ Meteor.methods({
             var existing = Meteor.users.find({'services.naver.id': naverData.serviceData.id}).count();
             if (existing)
                 throw new Meteor.Error(403, "user can not have a naver connected account");
-
-            Meteor.users.update(this.userId, {$set: {'services.naver': naverData.serviceData}});
+            // 페이스북 인증시 이메일 인증 true으로 변경
+            Meteor.users.update(this.userId, {
+                $set: {
+                    'services.naver': naverData.serviceData,
+                    'emails.0.verified': true
+                }
+            });
         }
     }
 });

@@ -2,7 +2,7 @@
       "name": "naver-connect",
       "description": "Naver Connect package to connect naver users to existing users.",
       "homepage": "https://github.com/datamaker/meteor-naver-connect",
-      "author": "datamaker <datamaker@urbanbase.com (https://urbanbase.com)",
-      "version": "0.1.3",
+      "author": "JungBin Kwon <datamaker@urbanbase.com (https://urbanbase.com)",
+      "version": "0.1.4",
       "git": "https://github.com/datamaker/meteor-naver-connect.git"
 }
