@@ -81,7 +81,7 @@ Accounts.updateOrCreateUserFromExternalService = function (serviceName, serviceD
         var setAttrs = {};
         _.each(serviceData, function (value, key) {
             setAttrs["services." + serviceName + "." + key] = value;
-            setAttrs['emails.0.verified'] = true
+            if ( serviceData.email ) setAttrs['emails.0.verified'] = true;
         });
 
         // XXX Maybe we should re-use the selector above and notice if the update
@@ -140,7 +140,7 @@ Accounts.externalServiceSelectorNaver = function (serviceName, serviceData, opti
     selector["$or"][0][serviceIdKey] = serviceData.id;
     //also check on email
     selector["$or"][1]["emails.address"] = serviceData.email;
-    if (!serviceData.email) selector["$or"][1]["emails.address"] = '';
+    if (!serviceData.email) selector["$or"][1]["emails.address"] = null;
         //selector = false;
     return selector;
 };

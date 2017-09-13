@@ -8,9 +8,9 @@ binary-heap@1.0.10
 boilerplate-generator@1.2.0
 callback-hook@1.0.10
 check@1.2.5
-datamaker:accounts-naver@0.0.3
-datamaker:naver-connect@0.1.7
-datamaker:naver-oauth@0.0.3
+datamaker:accounts-naver@0.0.4
+datamaker:naver-connect@0.1.9
+datamaker:naver-oauth@0.0.4
 ddp@1.3.0
 ddp-client@2.1.0
 ddp-common@1.2.9
