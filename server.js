@@ -132,14 +132,16 @@ Accounts.externalServiceSelector = function (serviceName, serviceData, options) 
 //our custom naver selector to also select users on naver-email
 Accounts.externalServiceSelectorNaver = function (serviceName, serviceData, options) {
 
+    console.log('Accounts.externalServiceSelectorNaver', serviceName, serviceData, options);
+
     var serviceIdKey = "services." + serviceName + ".id";
     var selector = {};
     selector["$or"] = [{}, {}];
     selector["$or"][0][serviceIdKey] = serviceData.id;
     //also check on email
     selector["$or"][1]["emails.address"] = serviceData.email;
-    if (!serviceData.email)
-        selector = false;
+    if (!serviceData.email) selector["$or"][1]["emails.address"] = '';
+        //selector = false;
     return selector;
 };
 
